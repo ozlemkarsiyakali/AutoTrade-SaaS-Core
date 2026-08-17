@@ -12,6 +12,8 @@ namespace AutoTrade.Core.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
 
-        public ICollection<Role> Roles { get; set; } = new List<Role>();
+        public Guid RoleId { get; set; }
+         
+        public Role Role { get; set; } = null!;
     }
 }

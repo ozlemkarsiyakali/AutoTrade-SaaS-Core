@@ -2,4 +2,5 @@
   <Project Path="AutoTrade.API/AutoTrade.API.csproj" />
   <Project Path="AutoTrade.Core/AutoTrade.Core.csproj" />
   <Project Path="AutoTrade.Infrastructure/AutoTrade.Infrastructure.csproj" />
+  <Project Path="DataAccess/DataAccess.csproj" Id="6c20e053-ce6a-4715-a5cb-2468110a3dc9" />
 </Solution>
