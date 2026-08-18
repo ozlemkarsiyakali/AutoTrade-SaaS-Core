@@ -8,11 +8,11 @@ namespace AutoTrade.Core.Entities
     {
         public string Name { get; set; } = string.Empty;  
 
-        public int VehicleBrandId { get; set; }
+        public Guid VehicleBrandId { get; set; }
         public VehicleBrand VehicleBrand { get; set; } = null!;
 
         // Araç Tipi İlişkisi (Otomobil, SUV, Tır vb.)
-        public int VehicleTypeId { get; set; }
+        public Guid VehicleTypeId { get; set; }
         public VehicleType VehicleType { get; set; } = null!;
 
         public ICollection<VehicleModelNode> Nodes { get; set; } = new List<VehicleModelNode>();
