@@ -25,7 +25,10 @@ public class AppDbContext : DbContext
 
         // Configurations klasöründeki Fluent API ayarlarını otomatik yükler
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.Entity<VehicleBrand>().HasQueryFilter(x => !x.IsDeleted);
     }
+
+
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

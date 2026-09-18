@@ -10,5 +10,6 @@ public class MapProfile : Profile
     {
         CreateMap<VehicleBrand, VehicleBrandDto>().ReverseMap();
         CreateMap<CreateVehicleBrandDto, VehicleBrand>();
+        CreateMap<UpdateVehicleBrandDto, VehicleBrand>();
     }
 }

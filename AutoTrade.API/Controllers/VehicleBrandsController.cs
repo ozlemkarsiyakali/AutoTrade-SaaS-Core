@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTrade.API.Controllers;
 
-public class VehicleBrandsController : CustomBaseController
+[Route("api/[controller]")]
+[ApiController]
+public class VehicleBrandsController : ControllerBase
 {
     private readonly IService<VehicleBrand> _service;
     private readonly IMapper _mapper;
@@ -22,62 +24,53 @@ public class VehicleBrandsController : CustomBaseController
     {
         var brands = await _service.GetAllAsync();
         var brandDtos = _mapper.Map<List<VehicleBrandDto>>(brands);
-        return CreateActionResult(brandDtos);
+        return Ok(CustomResponseDto<List<VehicleBrandDto>>.Success(200, brandDtos));
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var brand = await _service.GetByIdAsync(id);
         if (brand == null)
-        {
-            return CreateActionResult($"Brand with ID '{id}' was not found.", 404);
-        }
+            return NotFound(CustomResponseDto<NoContentDto>.Fail(404, "Vehicle brand not found"));
 
         var brandDto = _mapper.Map<VehicleBrandDto>(brand);
-        return CreateActionResult(brandDto);
+        return Ok(CustomResponseDto<VehicleBrandDto>.Success(200, brandDto));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateVehicleBrandDto createVehicleBrandDto)
+    public async Task<IActionResult> Create(CreateVehicleBrandDto dto)
     {
-        var brand = _mapper.Map<VehicleBrand>(createVehicleBrandDto);
-        var createdBrand = await _service.AddAsync(brand);
-        var brandDto = _mapper.Map<VehicleBrandDto>(createdBrand);
-
-        return CreateActionResult(brandDto, 201);
+        var brand = _mapper.Map<VehicleBrand>(dto);
+        await _service.AddAsync(brand);
+        var brandDto = _mapper.Map<VehicleBrandDto>(brand);
+        return CreatedAtAction(nameof(GetById), new { id = brand.Id }, CustomResponseDto<VehicleBrandDto>.Success(201, brandDto));
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, VehicleBrandDto vehicleBrandDto)
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateVehicleBrandDto dto)
     {
-        if (id != vehicleBrandDto.Id)
-        {
-            return CreateActionResult("ID mismatch.", 400);
-        }
+        var brand = await _service.GetByIdAsync(dto.Id);
+        if (brand == null)
+            return NotFound(CustomResponseDto<NoContentDto>.Fail(404, "Vehicle brand not found"));
 
-        var existingBrand = await _service.GetByIdAsync(id);
-        if (existingBrand == null)
-        {
-            return CreateActionResult($"Brand with ID '{id}' was not found.", 404);
-        }
-
-        _mapper.Map(vehicleBrandDto, existingBrand);
-        await _service.UpdateAsync(existingBrand);
-
-        return CreateActionResult(204);
+        _mapper.Map(dto, brand);
+        await _service.UpdateAsync(brand);
+        return Ok(CustomResponseDto<NoContentDto>.Success(204));
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var brand = await _service.GetByIdAsync(id);
-        if (brand == null)
-        {
-            return CreateActionResult($"Brand with ID '{id}' was not found.", 404);
-        }
+        if (brand == null || brand.IsDeleted)
+            return NotFound(CustomResponseDto<NoContentDto>.Fail(404, "Vehicle brand not found"));
 
-        await _service.RemoveAsync(brand);
-        return CreateActionResult(204);
+        brand.IsDeleted = true;
+        brand.UpdatedAt = DateTime.UtcNow;
+
+        await _service.UpdateAsync(brand);
+
+        return Ok(CustomResponseDto<NoContentDto>.Success(204));
     }
 }
