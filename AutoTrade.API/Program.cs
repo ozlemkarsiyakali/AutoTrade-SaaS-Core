@@ -1,35 +1,44 @@
-using AutoTrade.API.Mapping;
+using AutoTrade.API.Filters;
 using AutoTrade.API.Middlewares;
 using AutoTrade.Core.Interfaces;
-using AutoTrade.Infrastructure.Persistence;
+using AutoTrade.Core.Validators;
+using AutoTrade.Infrastructure.Persistence; 
 using AutoTrade.Infrastructure.Services;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext ve PostgreSQL kaydı
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("AutoTrade.Infrastructure")));
+// 1. Controller & Validation Filter
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 
-// Repository & Service DI Kayıtları
+// 2. FluentValidation Kaydı
+builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleBrandDtoValidator>();
+
+// 3. AppDbContext & PostgreSQL Kaydı (EKSİK OLAN KISIM)
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// 4. Repository, Service & UnitOfWork Kayıtları
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddControllers();
-builder.Services.AddAutoMapper(cfg =>
-{
-    cfg.AddProfile<MapProfile>();
-}); 
-// Swagger / OpenAPI Servisleri
+// 5. Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program)));
+// ==========================================
 var app = builder.Build();
+// ==========================================
+
 app.UseCustomException();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
