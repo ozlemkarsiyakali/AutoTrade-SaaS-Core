@@ -10,14 +10,16 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<User> Users => Set<User>(); 
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<VehicleBrand> VehicleBrands => Set<VehicleBrand>();
     public DbSet<VehicleModel> VehicleModels => Set<VehicleModel>();
     public DbSet<VehicleModelNode> VehicleModelNodes => Set<VehicleModelNode>();
     public DbSet<VehicleType> VehicleTypes => Set<VehicleType>();
+    public DbSet<AppRole> Roles { get; set; }
+    public DbSet<AppRoleClaim> RoleClaims { get; set; }
+    public DbSet<AppUserRole> UserRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
