@@ -1,110 +1,66 @@
 ﻿using AutoTrade.Core.DTOs;
-using AutoTrade.Core.Entities;
-using AutoTrade.Core.Interfaces;
+using AutoTrade.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-namespace AutoTrade.API.Controllers
+
+namespace AutoTrade.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class RolesController : CustomBaseController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RolesController : ControllerBase
+    private readonly IRoleService _roleService;
+
+    public RolesController(IRoleService roleService)
     {
-        private readonly IGenericRepository<Role> _roleRepository;
+        _roleService = roleService;
+    }
 
-        public RolesController(IGenericRepository<Role> roleRepository)
-        {
-            _roleRepository = roleRepository;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var response = await _roleService.GetAllRolesAsync();
+        return CreateActionResult(response);
+    }
 
-        // GET: api/Roles
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
-        {
-            var roles = await _roleRepository.GetAllAsync();
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var response = await _roleService.GetRoleByIdAsync(id);
+        return CreateActionResult(response);
+    }
 
-            var roleDtos = roles.Select(r => new RoleDto
-            {
-                Id = r.Id,
-                Name = r.Name,
-                Description = r.Description
-            });
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateRoleDto createRoleDto)
+    {
+        var response = await _roleService.CreateRoleAsync(createRoleDto);
+        return CreateActionResult(response);
+    }
 
-            return Ok(roleDtos);
-        }
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateRoleDto updateRoleDto)
+    {
+        var response = await _roleService.UpdateRoleAsync(updateRoleDto);
+        return CreateActionResult(response);
+    }
 
-        // GET: api/Roles/{id}
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<RoleDto>> GetRole(Guid id)
-        {
-            var role = await _roleRepository.GetByIdAsync(id);
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var response = await _roleService.DeleteRoleAsync(id);
+        return CreateActionResult(response);
+    }
 
-            if (role == null)
-                return NotFound($"ID'si {id} olan rol bulunamadı.");
+    [HttpPost("assign-role")]
+    public async Task<IActionResult> AssignRole(AssignRoleToUserDto assignRoleToUserDto)
+    {
+        var response = await _roleService.AssignRoleToUserAsync(assignRoleToUserDto);
+        return CreateActionResult(response);
+    }
 
-            var roleDto = new RoleDto
-            {
-                Id = role.Id,
-                Name = role.Name,
-                Description = role.Description
-            };
-
-            return Ok(roleDto);
-        }
-
-        // POST: api/Roles
-        [HttpPost]
-        public async Task<ActionResult<RoleDto>> CreateRole([FromBody] CreateRoleDto createRoleDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var role = new Role
-            {
-                Id = Guid.NewGuid(),
-                Name = createRoleDto.Name,
-                Description = createRoleDto.Description
-            };
-
-            await _roleRepository.AddAsync(role);
-
-            var roleDto = new RoleDto
-            {
-                Id = role.Id,
-                Name = role.Name,
-                Description = role.Description
-            };
-
-            return CreatedAtAction(nameof(GetRole), new { id = role.Id }, roleDto);
-        }
-
-        // PUT: api/Roles/{id}
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateRole(Guid id, [FromBody] UpdateRoleDto updateRoleDto)
-        {
-            var role = await _roleRepository.GetByIdAsync(id);
-
-            if (role == null)
-                return NotFound($"ID'si {id} olan rol bulunamadı.");
-
-            role.Name = updateRoleDto.Name;
-            role.Description = updateRoleDto.Description;
-
-            _roleRepository.Update(role);
-
-            return NoContent();
-        }
-
-        // DELETE: api/Roles/{id}
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteRole(Guid id)
-        {
-            var role = await _roleRepository.GetByIdAsync(id);
-
-            if (role == null)
-                return NotFound($"ID'si {id} olan rol bulunamadı.");
-
-            _roleRepository.Delete(role);
-
-            return NoContent();
-        }
+    [HttpGet("user-permissions/{userId:guid}")]
+    public async Task<IActionResult> GetUserPermissions(Guid userId)
+    {
+        var response = await _roleService.GetUserPermissionsAsync(userId);
+        return CreateActionResult(response);
     }
 }
