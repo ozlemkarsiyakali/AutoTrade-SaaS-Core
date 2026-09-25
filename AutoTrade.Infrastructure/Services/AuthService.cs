@@ -1,7 +1,7 @@
 ﻿using AutoTrade.Core.DTOs;
 using AutoTrade.Core.Entities;
 using AutoTrade.Core.Interfaces;
-using AutoTrade.Core.Repositories;
+using AutoTrade.Core;
 using AutoTrade.Core.Services;
 using Microsoft.AspNetCore.Http;
 
