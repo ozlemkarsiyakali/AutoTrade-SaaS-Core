@@ -2,6 +2,7 @@ using AutoTrade.API.Filters;
 using AutoTrade.API.Handlers;
 using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
+using AutoTrade.Core.Configuration;
 using AutoTrade.Core.Interfaces;
 using AutoTrade.Core.Services;
 using AutoTrade.Core.Validators;
@@ -10,9 +11,13 @@ using AutoTrade.Infrastructure.Seeds;
 using AutoTrade.Infrastructure.Services;
 using AutoTrade.Service.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +26,11 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
 });
+//JWT Option Binding
+var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<CustomTokenOptions>() 
+    ?? throw new InvalidOperationException("TokenOptions section is missing in appsettings.json");
+
+builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
 
 // 2. FluentValidation Kaydı
 builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleBrandDtoValidator>();
@@ -50,6 +60,30 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
     options.InstanceName = "AutoTrade_";
 });
+
+
+//Authentication & JwtBearer Service Registration
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = tokenOptions.Issuer,
+        ValidAudience = tokenOptions.Audience?.FirstOrDefault(),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+
+
 // ==========================================
 var app = builder.Build();
 // ==========================================
