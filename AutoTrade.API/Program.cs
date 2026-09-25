@@ -4,9 +4,11 @@ using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
 using AutoTrade.Core.Configuration;
 using AutoTrade.Core.Interfaces;
+using AutoTrade.Core;
 using AutoTrade.Core.Services;
 using AutoTrade.Core.Validators;
 using AutoTrade.Infrastructure.Persistence;
+using AutoTrade.Infrastructure;
 using AutoTrade.Infrastructure.Seeds;
 using AutoTrade.Infrastructure.Services;
 using AutoTrade.Service.Services;
@@ -16,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -26,8 +29,9 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
 });
-//JWT Option Binding
-var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<CustomTokenOptions>() 
+
+// JWT Option Binding
+var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<CustomTokenOptions>()
     ?? throw new InvalidOperationException("TokenOptions section is missing in appsettings.json");
 
 builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
@@ -35,7 +39,7 @@ builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection(
 // 2. FluentValidation Kaydı
 builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleBrandDtoValidator>();
 
-// 3. AppDbContext & PostgreSQL Kaydı (EKSİK OLAN KISIM)
+// 3. AppDbContext & PostgreSQL Kaydı
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -47,22 +51,59 @@ builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 
+// Auth & Token Servis DI Kayıtları (EKLENDİ)
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 // Custom Permission Policy DI Kayıtları
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
-// 5. Swagger
+// 5. Swagger & Bearer JWT Konfigürasyonu (GÜNCELLENDİ)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "AutoTrade SaaS API",
+        Version = "v1"
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Token değerinizi girin. Örnek: Bearer eyJhbGciOi..."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program)));
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
     options.InstanceName = "AutoTrade_";
 });
 
-
-//Authentication & JwtBearer Service Registration
+// Authentication & JwtBearer Service Registration
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -82,8 +123,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
-
 // ==========================================
 var app = builder.Build();
 // ==========================================
@@ -97,15 +136,19 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Authentication Middleware Eklendi (Sıralama Önemli!)
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
-
-//SuperAdmin Role Setted
+// SuperAdmin Role Setted & DB Migration
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await context.Database.MigrateAsync();
     await AppDbContextSeed.SeedAsync(context);
 }
+
 app.Run();
