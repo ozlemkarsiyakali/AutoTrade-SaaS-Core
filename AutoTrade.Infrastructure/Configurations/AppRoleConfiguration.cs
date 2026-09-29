@@ -21,5 +21,9 @@ public class AppRoleConfiguration : IEntityTypeConfiguration<AppRole>
         builder.HasMany(x => x.UserRoles)
                .WithOne(x => x.Role)
                .HasForeignKey(x => x.RoleId);
+
+        builder.HasIndex(r => r.Name)
+       .IsUnique()
+       .HasFilter("\"IsDeleted\" = false"); 
     }
 }

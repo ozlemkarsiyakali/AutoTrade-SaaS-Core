@@ -53,15 +53,26 @@ public class AuthService : IAuthService
 
     public async Task<ResponseDto<UserDto>> RegisterAsync(RegisterDto registerDto)
     {
-        // FindAsync kullanımı
         var existingUsers = await _userRepository.FindAsync(u => u.Email == registerDto.Email && !u.IsDeleted);
         if (existingUsers.Any())
         {
             return ResponseDto<UserDto>.Fail("Bu e-posta adresiyle kayıtlı bir kullanıcı zaten mevcut.", StatusCodes.Status400BadRequest);
         }
 
+        // Öncelik "User" rolünde, yoksa veritabanındaki ilk aktif rolü al
         var roles = await _roleRepository.FindAsync(r => r.Name == "User" && !r.IsDeleted);
         var defaultRole = roles.FirstOrDefault();
+
+        if (defaultRole == null)
+        {
+            var allRoles = await _roleRepository.FindAsync(r => !r.IsDeleted);
+            defaultRole = allRoles.FirstOrDefault();
+        }
+
+        if (defaultRole == null)
+        {
+            return ResponseDto<UserDto>.Fail("Sistemde tanımlı herhangi bir rol bulunamadı.", StatusCodes.Status500InternalServerError);
+        }
 
         var newUser = new User
         {
@@ -70,7 +81,7 @@ public class AuthService : IAuthService
             Email = registerDto.Email,
             PasswordHash = registerDto.Password,
             IsActive = true,
-            RoleId = defaultRole != null ? defaultRole.Id : Guid.Empty
+            RoleId = defaultRole.Id // Veritabanındaki geçerli Rol ID'si
         };
 
         await _userRepository.AddAsync(newUser);

@@ -1,10 +1,11 @@
-﻿using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoTrade.Core.DTOs;
 using AutoTrade.Core.Entities;
-using AutoTrade.Core.Interfaces; // IGenericRepository burada yer alıyor
+using AutoTrade.Core.Interfaces;
 using AutoTrade.Core.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace AutoTrade.Service.Services;
 
@@ -35,16 +36,21 @@ public class RoleService : IRoleService
 
     public async Task<CustomResponseDto<List<RoleDto>>> GetAllRolesAsync()
     {
-        var roles = await _roleRepository.FindAsync(x => !x.IsDeleted);
-        var allClaims = await _roleClaimRepository.FindAsync(x => !x.IsDeleted);
+        var roles = await _roleRepository.GetAllAsync();
+        var roleDtos = new List<RoleDto>();
 
-        var roleDtos = roles.Select(role => new RoleDto
+        foreach (var role in roles)
         {
-            Id = role.Id,
-            Name = role.Name,
-            Description = role.Description,
-            Permissions = allClaims.Where(c => c.RoleId == role.Id).Select(c => c.ClaimValue).ToList()
-        }).ToList();
+            var claims = await _roleClaimRepository.FindAsync(x => x.RoleId == role.Id && !x.IsDeleted);
+
+            roleDtos.Add(new RoleDto
+            {
+                Id = role.Id,
+                Name = role.Name,
+                Description = role.Description,
+                Permissions = claims.Select(c => c.ClaimValue).ToList()
+            });
+        }
 
         return CustomResponseDto<List<RoleDto>>.Success(200, roleDtos);
     }
@@ -72,32 +78,50 @@ public class RoleService : IRoleService
 
     public async Task<CustomResponseDto<RoleDto>> CreateRoleAsync(CreateRoleDto createRoleDto)
     {
-        var role = new AppRole
+        if (createRoleDto == null || string.IsNullOrWhiteSpace(createRoleDto.Name))
         {
-            Name = createRoleDto.Name,
-            Description = createRoleDto.Description
+            return CustomResponseDto<RoleDto>.Fail(400, "Rol adı boş olamaz.");
+        }
+
+        // Mükerrer Rol İsmi Kontrolü
+        var existingRoles = await _roleRepository.FindAsync(r =>
+            r.Name.ToLower() == createRoleDto.Name.Trim().ToLower() && !r.IsDeleted);
+
+        if (existingRoles.Any())
+        {
+            return CustomResponseDto<RoleDto>.Fail(400, $"'{createRoleDto.Name}' adında bir rol zaten mevcut.");
+        }
+
+        var newRole = new AppRole
+        {
+            Id = Guid.NewGuid(),
+            Name = createRoleDto.Name.Trim(),
+            Description = createRoleDto.Description,
         };
 
-        await _roleRepository.AddAsync(role);
+        await _roleRepository.AddAsync(newRole);
 
-        foreach (var permission in createRoleDto.Permissions.Distinct())
+        if (createRoleDto.Permissions != null && createRoleDto.Permissions.Any())
         {
-            await _roleClaimRepository.AddAsync(new AppRoleClaim
+            foreach (var permission in createRoleDto.Permissions.Distinct())
             {
-                RoleId = role.Id,
-                ClaimType = "Permission",
-                ClaimValue = permission
-            });
+                await _roleClaimRepository.AddAsync(new AppRoleClaim
+                {
+                    RoleId = newRole.Id,
+                    ClaimType = "Permission",
+                    ClaimValue = permission
+                });
+            }
         }
 
         await _unitOfWork.CommitAsync();
 
         var roleDto = new RoleDto
         {
-            Id = role.Id,
-            Name = role.Name,
-            Description = role.Description,
-            Permissions = createRoleDto.Permissions
+            Id = newRole.Id,
+            Name = newRole.Name,
+            Description = newRole.Description,
+            Permissions = createRoleDto.Permissions?.Distinct().ToList() ?? new List<string>()
         };
 
         return CustomResponseDto<RoleDto>.Success(201, roleDto);
@@ -111,7 +135,18 @@ public class RoleService : IRoleService
         if (role == null)
             return CustomResponseDto<NoContentDto>.Fail(404, "Role not found.");
 
-        role.Name = updateRoleDto.Name;
+        // Rol güncellemede mükerrer isim kontrolü (Kendi ID'si hariç)
+        var nameCheck = await _roleRepository.FindAsync(r =>
+            r.Id != updateRoleDto.Id &&
+            r.Name.ToLower() == updateRoleDto.Name.Trim().ToLower() &&
+            !r.IsDeleted);
+
+        if (nameCheck.Any())
+        {
+            return CustomResponseDto<NoContentDto>.Fail(400, $"'{updateRoleDto.Name}' adında başka bir rol zaten mevcut.");
+        }
+
+        role.Name = updateRoleDto.Name.Trim();
         role.Description = updateRoleDto.Description;
         role.UpdatedAt = DateTime.UtcNow;
 
@@ -125,14 +160,17 @@ public class RoleService : IRoleService
         }
 
         // Yeni izinleri ekle
-        foreach (var permission in updateRoleDto.Permissions.Distinct())
+        if (updateRoleDto.Permissions != null)
         {
-            await _roleClaimRepository.AddAsync(new AppRoleClaim
+            foreach (var permission in updateRoleDto.Permissions.Distinct())
             {
-                RoleId = role.Id,
-                ClaimType = "Permission",
-                ClaimValue = permission
-            });
+                await _roleClaimRepository.AddAsync(new AppRoleClaim
+                {
+                    RoleId = role.Id,
+                    ClaimType = "Permission",
+                    ClaimValue = permission
+                });
+            }
         }
 
         _roleRepository.Update(role);
