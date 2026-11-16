@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.Constants;
+﻿using AutoTrade.Application.Constants;
 using AutoTrade.Domain.Entities;
 using AutoTrade.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

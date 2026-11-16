@@ -2,12 +2,12 @@
 using AutoTrade.API.Handlers;
 using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
-using AutoTrade.Core;
-using AutoTrade.Core.Configuration;
+using AutoTrade.Application;
+using AutoTrade.Application.Configuration;
 using AutoTrade.Domain.Entities;
-using AutoTrade.Core.Interfaces;
-using AutoTrade.Core.Services;
-using AutoTrade.Core.Validators;
+using AutoTrade.Application.Interfaces;
+using AutoTrade.Application.Services;
+using AutoTrade.Application.Validators;
 using AutoTrade.Infrastructure;
 using AutoTrade.Infrastructure.Persistence;
 using AutoTrade.Infrastructure.Seeds;

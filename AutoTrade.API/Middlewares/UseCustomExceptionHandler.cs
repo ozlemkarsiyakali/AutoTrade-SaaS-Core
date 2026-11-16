@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using AutoTrade.Core.DTOs;
+using AutoTrade.Application.DTOs;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace AutoTrade.API.Middlewares;

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using AutoTrade.Domain.Entities;
-using AutoTrade.Core.Interfaces;
+using AutoTrade.Application.Interfaces;
 
 namespace AutoTrade.Infrastructure.Services;
 

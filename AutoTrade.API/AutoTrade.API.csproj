@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\AutoTrade.Core\AutoTrade.Core.csproj" />
+		<ProjectReference Include="..\AutoTrade.Application\AutoTrade.Application.csproj" />
 		<ProjectReference Include="..\AutoTrade.Infrastructure\AutoTrade.Infrastructure.csproj" />
 	</ItemGroup>
 

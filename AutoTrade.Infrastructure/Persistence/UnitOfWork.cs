@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.Interfaces;
+﻿using AutoTrade.Application.Interfaces;
 
 namespace AutoTrade.Infrastructure.Persistence;
 

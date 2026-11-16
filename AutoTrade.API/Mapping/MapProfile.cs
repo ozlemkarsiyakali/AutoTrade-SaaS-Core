@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using AutoTrade.Core.DTOs;
+using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
 
 namespace AutoTrade.API.Mapping;

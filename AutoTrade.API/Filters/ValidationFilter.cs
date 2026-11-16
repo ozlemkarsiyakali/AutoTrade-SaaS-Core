@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.DTOs;
+﻿using AutoTrade.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

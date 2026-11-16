@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using AutoTrade.Core;
-using AutoTrade.Core.DTOs;
+using AutoTrade.Application;
+using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
-using AutoTrade.Core.Interfaces;
-using AutoTrade.Core.Services;
+using AutoTrade.Application.Interfaces;
+using AutoTrade.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 

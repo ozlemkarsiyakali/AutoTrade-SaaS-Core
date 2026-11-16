@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using AutoTrade.Core.DTOs;
+using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
-using AutoTrade.Core.Interfaces;
+using AutoTrade.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTrade.API.Controllers;

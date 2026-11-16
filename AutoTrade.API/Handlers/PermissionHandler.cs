@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using AutoTrade.Core.Services;
+using AutoTrade.Application.Services;
 using AutoTrade.API.Requirements;
 using Microsoft.AspNetCore.Authorization;
 

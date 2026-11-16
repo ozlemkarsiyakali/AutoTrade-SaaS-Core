@@ -1,5 +1,5 @@
 ﻿using AutoTrade.Domain.Entities;
-using AutoTrade.Core.Interfaces;
+using AutoTrade.Application.Interfaces;
 using AutoTrade.Infrastructure;
 using AutoTrade.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace AutoTrade.Core.Interfaces
+namespace AutoTrade.Application.Interfaces
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
