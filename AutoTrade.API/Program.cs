@@ -2,19 +2,21 @@ using AutoTrade.API.Filters;
 using AutoTrade.API.Handlers;
 using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
-using AutoTrade.Core.Configuration;
-using AutoTrade.Core.Interfaces;
 using AutoTrade.Core;
+using AutoTrade.Core.Configuration;
+using AutoTrade.Core.Entities;
+using AutoTrade.Core.Interfaces;
 using AutoTrade.Core.Services;
 using AutoTrade.Core.Validators;
-using AutoTrade.Infrastructure.Persistence;
 using AutoTrade.Infrastructure;
+using AutoTrade.Infrastructure.Persistence;
 using AutoTrade.Infrastructure.Seeds;
 using AutoTrade.Infrastructure.Services;
 using AutoTrade.Service.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Tokens;
@@ -55,10 +57,13 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 // Custom Permission Policy DI Kayıtları
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 // 5. Swagger & Bearer JWT Konfigürasyonu (GÜNCELLENDİ)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

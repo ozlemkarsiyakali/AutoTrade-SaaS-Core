@@ -53,7 +53,7 @@ namespace AutoTrade.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("\"IsDeleted\" = false");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("AutoTrade.Core.Entities.AppRoleClaim", b =>
@@ -421,6 +421,12 @@ namespace AutoTrade.Infrastructure.Migrations
 
             modelBuilder.Entity("AutoTrade.Core.Entities.User", b =>
                 {
+                    b.HasOne("AutoTrade.Core.Entities.AppRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AutoTrade.Core.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
