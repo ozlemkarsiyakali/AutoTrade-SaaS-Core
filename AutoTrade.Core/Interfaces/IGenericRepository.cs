@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.Entities;
+﻿using AutoTrade.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

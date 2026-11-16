@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoTrade.Infrastructure.Persistence;

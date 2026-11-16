@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AutoTrade.Core.Entities
+namespace AutoTrade.Domain.Entities
 {
     public class VehicleModelNode : BaseEntity
     {

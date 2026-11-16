@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoTrade.Core.DTOs;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 using AutoTrade.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

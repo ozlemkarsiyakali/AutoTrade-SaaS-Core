@@ -22,7 +22,7 @@ namespace AutoTrade.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppRole", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppRoleClaim", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppRoleClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,7 +90,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("RoleClaims");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppUserRole", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppUserRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.Permission", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.Permission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.Role", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +178,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("Role");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.RolePermission", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.RolePermission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,7 +210,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("RolePermissions", (string)null);
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.User", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -262,7 +262,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleBrand", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleBrand", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("VehicleBrands");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModel", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -320,7 +320,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("VehicleModels");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModelNode", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModelNode", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -354,7 +354,7 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("VehicleModelNodes");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleType", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -378,9 +378,9 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.ToTable("VehicleTypes");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppRoleClaim", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppRoleClaim", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.AppRole", "Role")
+                    b.HasOne("AutoTrade.Domain.Entities.AppRole", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -389,9 +389,9 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppUserRole", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppUserRole", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.AppRole", "Role")
+                    b.HasOne("AutoTrade.Domain.Entities.AppRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -400,15 +400,15 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.RolePermission", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.RolePermission", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.Permission", "Permission")
+                    b.HasOne("AutoTrade.Domain.Entities.Permission", "Permission")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AutoTrade.Core.Entities.Role", "Role")
+                    b.HasOne("AutoTrade.Domain.Entities.Role", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -419,15 +419,15 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.User", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.User", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.AppRole", null)
+                    b.HasOne("AutoTrade.Domain.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AutoTrade.Core.Entities.Role", "Role")
+                    b.HasOne("AutoTrade.Domain.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -436,15 +436,15 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModel", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModel", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.VehicleBrand", "VehicleBrand")
+                    b.HasOne("AutoTrade.Domain.Entities.VehicleBrand", "VehicleBrand")
                         .WithMany("Models")
                         .HasForeignKey("VehicleBrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AutoTrade.Core.Entities.VehicleType", "VehicleType")
+                    b.HasOne("AutoTrade.Domain.Entities.VehicleType", "VehicleType")
                         .WithMany("Models")
                         .HasForeignKey("VehicleTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -455,13 +455,13 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("VehicleType");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModelNode", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModelNode", b =>
                 {
-                    b.HasOne("AutoTrade.Core.Entities.VehicleModelNode", "Parent")
+                    b.HasOne("AutoTrade.Domain.Entities.VehicleModelNode", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId");
 
-                    b.HasOne("AutoTrade.Core.Entities.VehicleModel", "VehicleModel")
+                    b.HasOne("AutoTrade.Domain.Entities.VehicleModel", "VehicleModel")
                         .WithMany("Nodes")
                         .HasForeignKey("VehicleModelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -472,41 +472,41 @@ namespace AutoTrade.Infrastructure.Migrations
                     b.Navigation("VehicleModel");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.AppRole", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.AppRole", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.Permission", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.Role", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.Role", b =>
                 {
                     b.Navigation("RolePermissions");
 
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleBrand", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleBrand", b =>
                 {
                     b.Navigation("Models");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModel", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModel", b =>
                 {
                     b.Navigation("Nodes");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleModelNode", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleModelNode", b =>
                 {
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("AutoTrade.Core.Entities.VehicleType", b =>
+            modelBuilder.Entity("AutoTrade.Domain.Entities.VehicleType", b =>
                 {
                     b.Navigation("Models");
                 });

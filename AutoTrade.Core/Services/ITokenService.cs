@@ -1,5 +1,5 @@
 ﻿using AutoTrade.Core.DTOs;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 
 namespace AutoTrade.Core.Services;
 

@@ -1,10 +1,10 @@
-using AutoTrade.API.Filters;
+﻿using AutoTrade.API.Filters;
 using AutoTrade.API.Handlers;
 using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
 using AutoTrade.Core;
 using AutoTrade.Core.Configuration;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 using AutoTrade.Core.Interfaces;
 using AutoTrade.Core.Services;
 using AutoTrade.Core.Validators;

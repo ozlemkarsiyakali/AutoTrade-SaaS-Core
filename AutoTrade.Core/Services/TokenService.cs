@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using AutoTrade.Core.Configuration;
 using AutoTrade.Core.DTOs;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 using AutoTrade.Core.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

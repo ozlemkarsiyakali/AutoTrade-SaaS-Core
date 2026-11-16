@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.Entities;
+﻿using AutoTrade.Domain.Entities;
 using AutoTrade.Core.Interfaces;
 using AutoTrade.Infrastructure;
 using AutoTrade.Infrastructure.Persistence;

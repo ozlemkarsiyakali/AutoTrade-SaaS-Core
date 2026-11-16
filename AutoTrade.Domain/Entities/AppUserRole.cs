@@ -1,4 +1,4 @@
-﻿namespace AutoTrade.Core.Entities;
+﻿namespace AutoTrade.Domain.Entities;
 
 public class AppUserRole : BaseEntity
 {

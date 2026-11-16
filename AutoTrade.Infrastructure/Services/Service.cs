@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using AutoTrade.Core.Entities;
+using AutoTrade.Domain.Entities;
 using AutoTrade.Core.Interfaces;
 
 namespace AutoTrade.Infrastructure.Services;
