@@ -3,7 +3,7 @@ using AutoTrade.Application;
 using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
 using AutoTrade.Application.Interfaces;
-using AutoTrade.Application.Services;
+using AutoTrade.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 

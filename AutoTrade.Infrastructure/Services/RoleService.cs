@@ -2,12 +2,12 @@
 using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
 using AutoTrade.Application.Interfaces;
-using AutoTrade.Application.Services;
+using AutoTrade.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 
-namespace AutoTrade.Service.Services;
+namespace AutoTrade.Infrastructure.Services;
 
 public class RoleService : IRoleService
 {

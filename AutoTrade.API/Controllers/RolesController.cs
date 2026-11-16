@@ -1,5 +1,5 @@
 ﻿using AutoTrade.Application.DTOs;
-using AutoTrade.Application.Services;
+using AutoTrade.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTrade.API.Controllers;

@@ -1,7 +1,7 @@
 ﻿using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
 
-namespace AutoTrade.Application.Services;
+namespace AutoTrade.Application.Interfaces;
 
 public interface ITokenService
 {

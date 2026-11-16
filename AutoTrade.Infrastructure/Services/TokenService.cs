@@ -5,11 +5,11 @@ using System.Text;
 using AutoTrade.Application.Configuration;
 using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
-using AutoTrade.Application.Services;
+using AutoTrade.Application.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AutoTrade.Service.Services;
+namespace AutoTrade.Infrastructure.Services;
 
 public class TokenService : ITokenService
 {

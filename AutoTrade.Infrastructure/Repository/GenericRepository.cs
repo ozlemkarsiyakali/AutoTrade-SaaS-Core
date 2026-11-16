@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace AutoTrade.Application.Interfaces
+namespace AutoTrade.Infrastructure.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {

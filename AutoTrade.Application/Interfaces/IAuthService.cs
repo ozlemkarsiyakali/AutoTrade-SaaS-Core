@@ -1,6 +1,6 @@
 ﻿using AutoTrade.Application.DTOs;
 
-namespace AutoTrade.Application.Services;
+namespace AutoTrade.Application.Interfaces;
 
 public interface IAuthService
 {
