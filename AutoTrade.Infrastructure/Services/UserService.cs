@@ -1,6 +1,6 @@
-﻿using AutoTrade.Core.DTOs;
-using AutoTrade.Core.Entities;
-using AutoTrade.Core.Interfaces;
+﻿using AutoTrade.Application.DTOs;
+using AutoTrade.Domain.Entities;
+using AutoTrade.Application.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace AutoTrade.Infrastructure.Services;

@@ -1,18 +1,18 @@
-using AutoTrade.API.Filters;
+﻿using AutoTrade.API.Filters;
 using AutoTrade.API.Handlers;
 using AutoTrade.API.Middlewares;
 using AutoTrade.API.Providers;
-using AutoTrade.Core;
-using AutoTrade.Core.Configuration;
-using AutoTrade.Core.Entities;
-using AutoTrade.Core.Interfaces;
-using AutoTrade.Core.Services;
-using AutoTrade.Core.Validators;
+using AutoTrade.Application;
+using AutoTrade.Application.Configuration;
+using AutoTrade.Domain.Entities;
+using AutoTrade.Application.Interfaces;
+using AutoTrade.Application.Interfaces;
+using AutoTrade.Application.Validators;
 using AutoTrade.Infrastructure;
 using AutoTrade.Infrastructure.Persistence;
+using AutoTrade.Infrastructure.Repository;
 using AutoTrade.Infrastructure.Seeds;
 using AutoTrade.Infrastructure.Services;
-using AutoTrade.Service.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -100,7 +100,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program)));
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {

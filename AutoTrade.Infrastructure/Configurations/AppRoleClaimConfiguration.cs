@@ -1,4 +1,4 @@
-﻿using AutoTrade.Core.Entities;
+﻿using AutoTrade.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
