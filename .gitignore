@@ -480,3 +480,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Extra ignores
+*.zip
+*.bak
+*.local.json
+.env
