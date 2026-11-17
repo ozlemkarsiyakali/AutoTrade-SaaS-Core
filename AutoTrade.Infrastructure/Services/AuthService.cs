@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using AutoTrade.Application;
+﻿using AutoTrade.Application;
 using AutoTrade.Application.DTOs;
+using AutoTrade.Application.Mappings;
 using AutoTrade.Domain.Entities;
 using AutoTrade.Application.Interfaces;
 using AutoTrade.Application.Interfaces;
@@ -16,22 +16,19 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly IMapper _mapper;
 
     public AuthService(
         IGenericRepository<User> userRepository,
         IGenericRepository<AppRole> roleRepository,
         ITokenService tokenService,
         IUnitOfWork unitOfWork,
-        IPasswordHasher<User> passwordHasher,
-        IMapper mapper)
+        IPasswordHasher<User> passwordHasher)
     {
         _userRepository = userRepository;
         _roleRepository = roleRepository;
         _tokenService = tokenService;
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _mapper = mapper;
     }
 
     public async Task<ResponseDto<TokenDto>> LoginAsync(LoginDto loginDto)
@@ -92,7 +89,8 @@ public class AuthService : IAuthService
         await _userRepository.AddAsync(newUser);
         await _unitOfWork.CommitAsync();
 
-        var userDto = _mapper.Map<UserDto>(newUser);
+        var userDto = newUser.ToDto();
+        userDto.RoleName = defaultRole.Name;
 
         return ResponseDto<UserDto>.Success(userDto, StatusCodes.Status201Created);
     }

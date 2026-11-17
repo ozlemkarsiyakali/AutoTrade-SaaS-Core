@@ -100,7 +100,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program)));
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {

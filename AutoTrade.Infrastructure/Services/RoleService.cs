@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoTrade.Application.DTOs;
+﻿using AutoTrade.Application.DTOs;
 using AutoTrade.Domain.Entities;
 using AutoTrade.Application.Interfaces;
 using AutoTrade.Application.Interfaces;
@@ -15,7 +14,6 @@ public class RoleService : IRoleService
     private readonly IGenericRepository<AppRoleClaim> _roleClaimRepository;
     private readonly IGenericRepository<AppUserRole> _userRoleRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
     private readonly IDistributedCache _cache;
 
     public RoleService(
@@ -23,14 +21,12 @@ public class RoleService : IRoleService
         IGenericRepository<AppRoleClaim> roleClaimRepository,
         IGenericRepository<AppUserRole> userRoleRepository,
         IUnitOfWork unitOfWork,
-        IMapper mapper,
         IDistributedCache cache)
     {
         _roleRepository = roleRepository;
         _roleClaimRepository = roleClaimRepository;
         _userRoleRepository = userRoleRepository;
         _unitOfWork = unitOfWork;
-        _mapper = mapper;
         _cache = cache;
     }
 
