@@ -8,8 +8,8 @@ public class AppRoleConfiguration : IEntityTypeConfiguration<AppRole>
 {
     public void Configure(EntityTypeBuilder<AppRole> builder)
     {
+        builder.ToTable("Roles");
         builder.HasKey(x => x.Id);
-        builder.HasQueryFilter(x => !x.IsDeleted);
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
         builder.Property(x => x.Description).HasMaxLength(200);
@@ -22,8 +22,8 @@ public class AppRoleConfiguration : IEntityTypeConfiguration<AppRole>
                .WithOne(x => x.Role)
                .HasForeignKey(x => x.RoleId);
 
-        builder.HasIndex(r => r.Name)
-       .IsUnique()
-       .HasFilter("\"IsDeleted\" = false"); 
+        builder.HasIndex(x => x.Name)
+               .IsUnique()
+               .HasFilter("\"IsDeleted\" = false");
     }
 }

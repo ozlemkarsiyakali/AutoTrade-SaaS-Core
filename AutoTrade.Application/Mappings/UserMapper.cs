@@ -4,9 +4,11 @@ using Riok.Mapperly.Abstractions;
 
 namespace AutoTrade.Application.Mappings;
 
-[Mapper]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public static partial class UserMapper
 {
+    // Roller ayrı tabloda tutulduğu için servis katmanında doldurulur
+    [MapperIgnoreTarget(nameof(UserDto.RoleId))]
     [MapperIgnoreTarget(nameof(UserDto.RoleName))]
     public static partial UserDto ToDto(this User source);
 }
