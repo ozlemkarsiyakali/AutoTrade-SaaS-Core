@@ -8,9 +8,12 @@ public class AppRoleClaimConfiguration : IEntityTypeConfiguration<AppRoleClaim>
 {
     public void Configure(EntityTypeBuilder<AppRoleClaim> builder)
     {
+        builder.ToTable("RoleClaims");
         builder.HasKey(x => x.Id);
-        builder.HasQueryFilter(x => !x.IsDeleted);
 
+        builder.Property(x => x.ClaimType).IsRequired().HasMaxLength(50);
         builder.Property(x => x.ClaimValue).IsRequired().HasMaxLength(100);
+
+        builder.HasIndex(x => x.RoleId);
     }
 }

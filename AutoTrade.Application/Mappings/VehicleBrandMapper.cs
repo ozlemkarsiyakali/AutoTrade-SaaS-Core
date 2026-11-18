@@ -4,7 +4,7 @@ using Riok.Mapperly.Abstractions;
 
 namespace AutoTrade.Application.Mappings;
 
-[Mapper]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public static partial class VehicleBrandMapper
 {
     public static partial VehicleBrandDto ToDto(this VehicleBrand source);

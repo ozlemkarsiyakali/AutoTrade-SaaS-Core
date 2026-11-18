@@ -46,8 +46,7 @@ public class UserService : IUserService
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
-            CreatedAt = DateTime.UtcNow,
-            RoleId = dto.RoleId
+            CreatedAt = DateTime.UtcNow, 
         };
 
         newUser.PasswordHash = _passwordHasher.HashPassword(newUser, dto.Password);

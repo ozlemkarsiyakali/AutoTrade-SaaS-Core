@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using AutoTrade.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +12,13 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
-    public DbSet<Permission> Permissions => Set<Permission>();
-    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<AppRole> Roles => Set<AppRole>();
+    public DbSet<AppRoleClaim> RoleClaims => Set<AppRoleClaim>();
+    public DbSet<AppUserRole> UserRoles => Set<AppUserRole>();
     public DbSet<VehicleBrand> VehicleBrands => Set<VehicleBrand>();
     public DbSet<VehicleModel> VehicleModels => Set<VehicleModel>();
     public DbSet<VehicleModelNode> VehicleModelNodes => Set<VehicleModelNode>();
     public DbSet<VehicleType> VehicleTypes => Set<VehicleType>();
-    public DbSet<AppRole> Roles => Set<AppRole>();
-    public DbSet<AppRoleClaim> RoleClaims => Set<AppRoleClaim>();
-    public DbSet<AppUserRole> UserRoles => Set<AppUserRole>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,38 +27,29 @@ public class AppDbContext : DbContext
         // Configurations klasöründeki Fluent API ayarlarını otomatik yükler
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        // 1. AppRole haritalamasını garantiye al (Fazla 'Role' tablosu oluşmasını engeller)
-        modelBuilder.Entity<AppRole>(entity =>
+        ApplySoftDeleteFilter(modelBuilder);
+    }
+
+    // BaseEntity'den türeyen her entity için IsDeleted = false filtresini uygular
+    private static void ApplySoftDeleteFilter(ModelBuilder modelBuilder)
+    {
+        var entityTypes = modelBuilder.Model.GetEntityTypes()
+            .Where(t => typeof(BaseEntity).IsAssignableFrom(t.ClrType))
+            .ToList();
+
+        foreach (var entityType in entityTypes)
         {
-            entity.ToTable("Roles");
-            entity.HasKey(r => r.Id);
-        });
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            var isDeleted = Expression.Property(parameter, nameof(BaseEntity.IsDeleted));
+            var filter = Expression.Lambda(Expression.Equal(isDeleted, Expression.Constant(false)), parameter);
 
-        // 2. User ve AppRole arasındaki Foreign Key ilişkisini 'Roles' tablosuna bağla
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.ToTable("Users");
-
-            entity.HasOne<AppRole>()
-                  .WithMany()
-                  .HasForeignKey(u => u.RoleId)
-                  .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        // 3. Global Soft-Delete Query Filter (IsDeleted = false olanları otomatik filtreler)
-        modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<AppRole>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<VehicleBrand>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<VehicleModel>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<VehicleModelNode>().HasQueryFilter(x => !x.IsDeleted);
-        modelBuilder.Entity<VehicleType>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(filter);
+        }
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var entries = ChangeTracker.Entries<BaseEntity>();
-
-        foreach (var entry in entries)
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
             switch (entry.State)
             {
